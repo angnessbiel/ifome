@@ -1,82 +1,108 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { View, Text, Image, StyleSheet, Pressable, SafeAreaView, FlatList, ScrollView } from 'react-native';
 import Header from './components/header';
+import { AppContext } from '../scripts/AppContext';
+import { useContext } from 'react';
+import { Link } from 'expo-router';
 
-const style = StyleSheet.create({
-    tinyLogo: {
-        width: 100,
-        height: 100,
-      },
-
-})
-
-const produto = [
-    {
-      id: '1',
-      name: 'Laranja',
-      local: 'Mercado Lima',
-      price: 'R$8,49',
-      img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnDdmtlJT1cgwPdda4mAqua8S6gGj1dA1y8A&s',
-
-    },
-    {
-      id: '2',
-      name: 'Maçã',
-      local: 'Mercado Lima',
-      price: 'R$29,99',
-      img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnDdmtlJT1cgwPdda4mAqua8S6gGj1dA1y8A&s',
-    },
-    {
-        id: '3',
-        name: 'Melancia',
-        local: 'Mercado Lima',
-        price: 'R$7,98',
-        img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgSUIaBT8IyNqSvEVXvzPr7HPRlgmd3i0XSg&s',
-    },
-    {
-        id: '4',
-        name: 'Mamão',
-        local: 'Mercado Lima',
-        price: 'R$14,50/kg',
-        img: 'https://www.proativaalimentos.com.br/image/cache/catalog/img_prod/Mamao-Papaya[1]-1000x1000.jpg',
-      },
-
-  ];
-  const Item = ({ name, local, price, img }) => {
+const Item = ({ id, name, local, price, img }) => {
+    const { setCarrinho, carrinho } = useContext(AppContext)
     return (
-      <View style={style.item}>
-        <Image
-          style={style.tinyLogo}
-          source={{
-            uri: img,
-          }}
-        />
-        <View style={{ flex: 1 }}>
-          <Text style={style.name}>{name}</Text>
-          <Text style={style.local}>{local}</Text>
-          <Text style={style.price}>{price}</Text>
-          <Pressable style={style.button}>
-            <Text style={style.buttonText}>Comprar</Text>
-          </Pressable>
+        <View style={style.itens}>
+            <Image
+                style={style.img}
+                source={{
+                    uri: img,
+                }}
+            />
+            <View style={style.info}>
+                <Text style={style.name}>{name}</Text>
+                <Text style={style.local}>{local}</Text>
+                <Text style={style.price}>R${price}</Text>
+                <Pressable onPress={() => setCarrinho([...carrinho, { id, name, local, price }])}>
+                    <Text style={style.butt}>Comprar</Text>
+                </Pressable>
+            </View>
         </View>
-      </View>
-    );
-  };
-  
+    )
+};
 
-export default compras = () => {
-
-    return(
-        <ScrollView style = {style.View}>
-            <Header/>
-  <SafeAreaView style={style.container}>
-      <FlatList
-        data={produto}
-        renderItem={({item}) => <Item name={item.name} local={item.local} price={item.price} img={item.img} />}
-        keyExtractor={item => item.id}
-      />
-    </SafeAreaView>
+export default conteudo = () => {
+    const { lanches, carrinho } = useContext(AppContext)
+    return (
+        <ScrollView style={style.View}>
+            <Header />
+            <View style={style.carrinho}>
+            <Image style={style.carr} source={require('../assets/images/cart.png')} />
+                   <Text style={style.text}>{carrinho.length} itens</Text>
+                   {
+                       carrinho.length > 0 &&
+                       <Link href="./cart" >
+                           <Text style={style.compra}>Finalizar compra</Text>
+                       </Link>
+                   }
+               </View>
+            <SafeAreaView style={style.container}>
+                <FlatList
+                    data={lanches}
+                    renderItem={({ item }) => <Item name={item.name} local={item.local} price={item.price} img={item.img} />}
+                    keyExtractor={item => item.id}
+                />
+            </SafeAreaView>
         </ScrollView>
     )
-
 }
+
+const style = StyleSheet.create({
+    itens: {
+        display: 'flex',
+        flexDirection: 'row',
+        margin: 5,
+        borderColor: '#ccc',
+        borderWidth: 2,
+        padding: 15,
+    },
+    img: {
+        width: 250,
+        height: 110,
+    },
+    info: {
+       marginLeft: 20
+    },
+    name: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 3,
+    },
+    local: {
+        fontSize: 13,
+        color: 'gray',
+    },
+    price: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 3,
+    },
+    butt: {
+        fontSize: 16,
+        color: 'red',
+    },
+    carr: {
+        height:30,
+        width:30,
+    },
+    carrinho: {
+        display: 'flex',
+        flexDirection: 'row',
+        margin: 5,
+        marginBottom: 10,
+        gap: 10,
+        justifyContent: 'right'
+    },
+    text:{
+        color: 'red'
+    },
+    compra: {
+        color: 'red'
+    }
+})
